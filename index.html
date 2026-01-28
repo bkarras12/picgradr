@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dating app Image Quality Grader</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', sans-serif;
+    background-color: #ffd1dc;
+    color: #333;
+}
+
+header, footer {
+    background-color: #ffd1dc;
+    padding: 10px 20px;
+    text-align: center;
+}
+
+.upload-form {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 20px;
+    background: #DE5D83;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+form h2 {
+    margin-top: 0;
+    text-align: center;
+}
+
+form h3{
+    text-align: center;
+
+}
+
+input[type="file"] {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    background-color: #f8b9c7;
+    color: black;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #DE5D83;
+    color: white;
+}
+
+img {
+    height: 100px;
+    width: 100px;
+    width: auto;
+}
+
+body h2{
+text-align: center;
+font-family: 'Courier New', Courier, monospace;
+padding-top: 20px;
+padding-left: 10%;
+padding-right: 10%;
+}
+body h3{
+    text-align: center;
+    font-family: 'Courier New', Courier, monospace;
+    padding: 30px;
+    padding-left: 20%;
+    padding-right: 20%;
+}
+hr{
+    border-color:#DE5D83
+
+}
+
+.footer{
+    color: black;
+    font-family: 'Courier New', Courier, monospace;
+    
+}
+
+.footer:hover{
+    background-color: #DE5D83;
+    color:black;
+}
+
+.header_link{
+    font-size: smaller;
+    color: black;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+
+    </style>
+</head>
+<body>
+    <header>
+        <img src="pg_logo_main.png" alt="Picgradr logo">
+        <p></p>
+        <a href="article.html" class="header_link">Articles about dating</a>
+
+        <hr><hr>
+    
+    </header>
+    <main>
+        <div class="upload-form">
+            <form action="upload.php" method="post" enctype="multipart/form-data">
+                <h2>Upload Image</h2>
+                <input type="file" name="image" required><br>
+                <button type="submit">Upload</button>
+            </form>
+        </div>
+
+        <h2>Welcome to Pic Gradr, where we help make your first impression count</h2>
+        <h3>In the world of online dating and dating apps, your profile pictures is your gateway to matches and connections. 
+            But how do you know if your chosen photo showcases the best version of you? That's where we come in. 
+            At Pic Gradr, we specialize in elevating your dating app experience by 
+            providing professional-grade evaluations of your profile pictures using our advanced computer
+            algorithms. We want to help you be your best self!</h3>
+    </main>
+
+    <footer>
+        <a href="information.html" class="footer">More Information</a>
+        
+    </footer>
+    
+</body>
+</html>

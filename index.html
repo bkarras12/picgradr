@@ -345,6 +345,7 @@
     <!-- Upload form -->
     <div class="upload-card" id="uploadSection">
         <h2>Upload Your Photo</h2>
+
         <label class="file-label" for="fileInput">
             <span>📷</span>
             Click to choose an image
@@ -386,9 +387,11 @@
 </footer>
 
 <script>
-    const fileInput  = document.getElementById('fileInput');
-    const fileName   = document.getElementById('fileName');
-    const gradeBtn   = document.getElementById('gradeBtn');
+    const OPENAI_API_KEY = '__OPENAI_API_KEY__';
+
+    const fileInput     = document.getElementById('fileInput');
+    const fileName      = document.getElementById('fileName');
+    const gradeBtn      = document.getElementById('gradeBtn');
     const uploadSection = document.getElementById('uploadSection');
     const loading    = document.getElementById('loading');
     const results    = document.getElementById('results');
@@ -403,14 +406,49 @@
         expression:  'Expression',
     };
 
+    const SCHEMA = {
+        type: 'object',
+        properties: {
+            lighting:             { type: 'string', enum: ['A','B','C','D','F'] },
+            lighting_feedback:    { type: 'string' },
+            composition:          { type: 'string', enum: ['A','B','C','D','F'] },
+            composition_feedback: { type: 'string' },
+            clarity:              { type: 'string', enum: ['A','B','C','D','F'] },
+            clarity_feedback:     { type: 'string' },
+            background:           { type: 'string', enum: ['A','B','C','D','F'] },
+            background_feedback:  { type: 'string' },
+            expression:           { type: 'string', enum: ['A','B','C','D','F'] },
+            expression_feedback:  { type: 'string' },
+            overall:              { type: 'string', enum: ['A','B','C','D','F'] },
+            summary:              { type: 'string' },
+        },
+        required: [
+            'lighting','lighting_feedback',
+            'composition','composition_feedback',
+            'clarity','clarity_feedback',
+            'background','background_feedback',
+            'expression','expression_feedback',
+            'overall','summary',
+        ],
+        additionalProperties: false,
+    };
+
+    const PROMPT = `You are an expert dating profile photo evaluator. Grade the photo across 5 metrics using A–F letter grades (A=excellent, B=good, C=average, D=poor, F=unacceptable).
+
+Metrics:
+1. Lighting — Is the subject well-lit? Natural or flattering light? Harsh shadows or overexposure?
+2. Composition — Is the subject well-framed? Is the crop flattering? Good use of space?
+3. Clarity — Is the image sharp and in focus? High resolution? Any motion blur?
+4. Background — Is the background clean and non-distracting? Appropriate for a dating profile?
+5. Expression — Does the subject look approachable, confident, genuine? Natural smile?
+
+Be honest but constructive. Give specific, actionable feedback for each metric.
+For "overall", consider the photo holistically as a dating profile image.
+For "summary", write 2–3 sentences with the top takeaway and one key improvement tip.`;
+
     fileInput.addEventListener('change', () => {
-        if (fileInput.files.length > 0) {
-            fileName.textContent = fileInput.files[0].name;
-            gradeBtn.disabled = false;
-        } else {
-            fileName.textContent = 'No file selected';
-            gradeBtn.disabled = true;
-        }
+        fileName.textContent = fileInput.files.length > 0 ? fileInput.files[0].name : 'No file selected';
+        gradeBtn.disabled = fileInput.files.length === 0;
     });
 
     gradeBtn.addEventListener('click', async () => {
@@ -427,18 +465,9 @@
         reader.onload = e => { document.getElementById('previewImg').src = e.target.result; };
         reader.readAsDataURL(file);
 
-        const formData = new FormData();
-        formData.append('image', file);
-
         try {
-            const resp = await fetch('/analyze', { method: 'POST', body: formData });
-
-            if (!resp.ok) {
-                const err = await resp.json().catch(() => ({ detail: 'Unknown error' }));
-                throw new Error(err.detail || `Server error ${resp.status}`);
-            }
-
-            const data = await resp.json();
+            const base64 = await fileToBase64(file);
+            const data = await gradePhoto(OPENAI_API_KEY, base64, file.type);
             displayResults(data);
         } catch (err) {
             loading.style.display = 'none';
@@ -455,6 +484,51 @@
         gradeBtn.disabled = true;
         hideError();
     });
+
+    function fileToBase64(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result.split(',')[1]);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+        });
+    }
+
+    async function gradePhoto(apiKey, base64Data, mimeType) {
+        const resp = await fetch('https://api.openai.com/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+            },
+            body: JSON.stringify({
+                model: 'gpt-4o',
+                messages: [{
+                    role: 'user',
+                    content: [
+                        {
+                            type: 'image_url',
+                            image_url: { url: `data:${mimeType};base64,${base64Data}` },
+                        },
+                        { type: 'text', text: PROMPT },
+                    ],
+                }],
+                response_format: {
+                    type: 'json_schema',
+                    json_schema: { name: 'photo_grades', strict: true, schema: SCHEMA },
+                },
+            }),
+        });
+
+        if (!resp.ok) {
+            const err = await resp.json().catch(() => ({}));
+            const msg = err?.error?.message || `OpenAI error ${resp.status}`;
+            throw new Error(msg);
+        }
+
+        const json = await resp.json();
+        return JSON.parse(json.choices[0].message.content);
+    }
 
     function displayResults(data) {
         loading.style.display = 'none';

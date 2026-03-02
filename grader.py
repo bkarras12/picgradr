@@ -1,4 +1,4 @@
-from langchain_anthropic import ChatAnthropic
+from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage
 from pydantic import BaseModel, Field
 from typing import Literal
@@ -44,16 +44,14 @@ For the overall grade, consider the photo holistically as a dating profile image
 
 
 def grade_image(base64_data: str, media_type: str) -> PhotoGrades:
-    model = ChatAnthropic(model="claude-opus-4-6")
+    model = ChatOpenAI(model="gpt-4o-mini")
     structured = model.with_structured_output(PhotoGrades)
 
     msg = HumanMessage(content=[
         {
-            "type": "image",
-            "source": {
-                "type": "base64",
-                "media_type": media_type,
-                "data": base64_data,
+            "type": "image_url",
+            "image_url": {
+                "url": f"data:{media_type};base64,{base64_data}",
             },
         },
         {

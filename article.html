@@ -3,83 +3,215 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>View Articles</title>
+    <title>Articles — PicGradr</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700;900&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --red:   #C94B2D;
+            --cream: #F2EDE4;
+            --dark:  #1C1C1C;
+            --white: #FFFFFF;
+            --mid:   #888;
+            --hh:    52px;
+        }
+
         body {
-        margin: 0;
-        padding: 110px;
-        font-family: 'Courier New', Courier, monospace;
+            font-family: 'Roboto', sans-serif;
+            background: var(--white);
+            color: var(--dark);
+            min-height: 100vh;
+        }
 
-        background-color: #ffd1dc;
-        color: #333;
+        /* ── Header ── */
+        header {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            height: var(--hh);
+            background: var(--red);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+            z-index: 100;
+        }
 
+        .logo {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #fff;
+            text-decoration: none;
+            letter-spacing: 0.04em;
         }
-        .article-container {
-            margin-top: 20px;
-            font-family: 'Courier New', Courier, monospace;
-            font-weight: bold;
-            
+
+        header nav { display: flex; gap: 28px; }
+
+        header nav a {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
         }
-        .article-title {
-            font-size: 24px;
-            margin-bottom: 10px;
-            font-family: 'Courier New', Courier, monospace;
-            font-weight: bolder;
+
+        header nav a:hover { color: #fff; }
+        header nav a[aria-current] { color: #fff; }
+
+        /* ── Page hero ── */
+        .page-hero {
+            background: var(--cream);
+            padding: 80px 64px 56px;
+            margin-top: var(--hh);
         }
-        .article-author {
-            font-size: 18px;
-            color: #666;
+
+        .page-eyebrow {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.68rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--red);
+            margin-bottom: 16px;
+        }
+
+        .page-title {
+            font-size: 3rem;
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            line-height: 1.05;
+            color: var(--dark);
+            max-width: 560px;
+        }
+
+        /* ── Articles ── */
+        main {
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 64px 32px 80px;
+        }
+
+        .article + .article {
+            margin-top: 60px;
+            padding-top: 60px;
+            border-top: 1px solid #e4e4e4;
+        }
+
+        .article-meta {
+            display: flex;
+            align-items: center;
+            gap: 16px;
             margin-bottom: 20px;
         }
-        .article-content {
-            text-align: justify;
+
+        .article-category {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.65rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--red);
         }
-        hr{
-        border-color:#DE5D83
+
+        .article-sep { width: 1px; height: 12px; background: #ccc; }
+
+        .article-author {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.65rem;
+            letter-spacing: 0.06em;
+            color: var(--mid);
+        }
+
+        .article-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            line-height: 1.25;
+            color: var(--dark);
+            margin-bottom: 24px;
+            letter-spacing: -0.01em;
+        }
+
+        .article-body p {
+            font-size: 1rem;
+            line-height: 1.78;
+            color: #3a3a3a;
+            margin-bottom: 18px;
+        }
+
+        .article-body p:last-child { margin-bottom: 0; }
+
+        /* ── Footer ── */
+        footer {
+            background: var(--dark);
+            padding: 18px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-top: 3px solid var(--red);
+        }
+
+        footer span {
+            font-family: 'Roboto Mono', monospace;
+            color: rgba(255,255,255,0.3);
+            font-size: 0.72rem;
+        }
+
+        footer a {
+            font-family: 'Roboto Mono', monospace;
+            color: rgba(255,255,255,0.55);
+            text-decoration: none;
+            font-size: 0.72rem;
+            letter-spacing: 0.06em;
+        }
+
+        footer a:hover { color: #fff; }
+
+        @media (max-width: 600px) {
+            .page-hero { padding: 60px 28px 40px; }
+            .page-title { font-size: 2.2rem; }
+            main { padding: 48px 28px 64px; }
+            footer { padding: 18px 28px; }
         }
     </style>
 </head>
 <body>
 
-    <!--Article #1-->
-<div class="article-container">
-    <div class="article-title">Modern Dating in Numbers</div>
-    <div class="article-author">By Cooper Degenerette</div>
-    <div class="article-content">
-        <p>
-            The landscape of love and dating has undergone a seismic shift in the 21st century, propelled by the advent of digital technology. 
-            Gone are the days when romantic connections were predominantly forged in school hallways, through mutual friends, or within community 
-            gatherings. Today, the quest for companionship often begins with a swipe, a like, or a message on an online platform. This article delves 
-            into the statistics that paint a picture of modern dating, revealing how technology intertwines with the human desire for connection.
-        </p>
-        <p>
-            Over the past decade, online dating has transitioned from a fringe activity to a fundamental aspect of the romantic lives of millions. Approximately 30% of U.S. 
-            adults have used a dating site or app, with figures rising among younger demographics and the LGBTQ+ community. 
-            Couples who meet online are more likely to progress to marriage compared to those who meet through traditional means. 
-            Studies suggest that relationships started online are less likely to end in the first year.
-        </p>
-        <p>
-            While digital platforms offer unprecedented access to potential partners, many express feelings of overwhelm and frustration. 
-            Users often cite challenges such as superficiality, ghosting, and the paradox of choice, which has lead to a decrease in young adults being
-            involved in a romantic experience. Safety remains a paramount concern as well, with daters being wary of scams, misleading profiles, 
-            and privacy breaches. Despite these concerns, the majority view online dating as a necessary tool in the modern quest for love.
-        </p>
-        <p>
-            The statistics of modern dating reveal a complex portrait of how individuals are navigating the realms of love, intimacy, and 
-            connection in the digital age. As technology continues to evolve, so too will the ways in which we seek out and establish romantic
-             relationships. Amidst the numbers and trends, the enduring quest for love remains a testament to the human condition, ever-adapting
-              to the changing tides of society and technology.
-        </p>
-    </div>
+<header>
+    <a class="logo" href="/">PICGRADR _</a>
+    <nav>
+        <a href="article.html" aria-current="true">Articles</a>
+        <a href="information.html">Info</a>
+    </nav>
+</header>
+
+<div class="page-hero">
+    <div class="page-eyebrow">Read</div>
+    <h1 class="page-title">Articles on Modern Dating</h1>
 </div>
-<hr>
 
+<main>
 
+    <article class="article">
+        <div class="article-meta">
+            <span class="article-category">Dating &amp; Tech</span>
+            <span class="article-sep"></span>
+            <span class="article-author">By Cooper Degenerette</span>
+        </div>
+        <h2 class="article-title">Modern Dating in Numbers</h2>
+        <div class="article-body">
+            <p>The landscape of love and dating has undergone a seismic shift in the 21st century, propelled by the advent of digital technology. Gone are the days when romantic connections were predominantly forged in school hallways, through mutual friends, or within community gatherings. Today, the quest for companionship often begins with a swipe, a like, or a message on an online platform. This article delves into the statistics that paint a picture of modern dating, revealing how technology intertwines with the human desire for connection.</p>
+            <p>Over the past decade, online dating has transitioned from a fringe activity to a fundamental aspect of the romantic lives of millions. Approximately 30% of U.S. adults have used a dating site or app, with figures rising among younger demographics and the LGBTQ+ community. Couples who meet online are more likely to progress to marriage compared to those who meet through traditional means. Studies suggest that relationships started online are less likely to end in the first year.</p>
+            <p>While digital platforms offer unprecedented access to potential partners, many express feelings of overwhelm and frustration. Users often cite challenges such as superficiality, ghosting, and the paradox of choice, which has led to a decrease in young adults being involved in a romantic experience. Safety remains a paramount concern as well, with daters being wary of scams, misleading profiles, and privacy breaches. Despite these concerns, the majority view online dating as a necessary tool in the modern quest for love.</p>
+            <p>The statistics of modern dating reveal a complex portrait of how individuals are navigating the realms of love, intimacy, and connection in the digital age. As technology continues to evolve, so too will the ways in which we seek out and establish romantic relationships. Amidst the numbers and trends, the enduring quest for love remains a testament to the human condition, ever-adapting to the changing tides of society and technology.</p>
+        </div>
+    </article>
 
+</main>
 
-
-
-
+<footer>
+    <span>&copy; 2025 PicGradr</span>
+    <a href="information.html">More Information</a>
+</footer>
 
 </body>
 </html>

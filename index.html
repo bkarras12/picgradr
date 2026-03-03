@@ -4,385 +4,478 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PicGradr — Dating Profile Photo Grader</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700;900&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+        :root {
+            --red:    #C94B2D;
+            --cream:  #F2EDE4;
+            --dark:   #1C1C1C;
+            --white:  #FFFFFF;
+            --mid:    #888;
+            --hh:     52px;
+        }
+
         body {
             font-family: 'Roboto', sans-serif;
-            background-color: #ffd1dc;
-            color: #333;
+            background: var(--white);
+            color: var(--dark);
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
         }
 
+        /* ── Header ── */
         header {
-            background-color: #ffd1dc;
-            padding: 16px 20px 0;
-            text-align: center;
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            height: var(--hh);
+            background: var(--red);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+            z-index: 100;
         }
 
-        header img {
-            height: 80px;
-            width: auto;
+        .logo {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #fff;
+            text-decoration: none;
+            letter-spacing: 0.04em;
         }
 
-        header nav {
-            margin-top: 10px;
-            padding-bottom: 12px;
-        }
+        header nav { display: flex; gap: 28px; }
 
         header nav a {
-            font-family: 'Courier New', monospace;
-            font-size: 0.85rem;
-            color: #555;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.8);
             text-decoration: none;
-            margin: 0 12px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
         }
 
-        header nav a:hover { color: #DE5D83; }
+        header nav a:hover { color: #fff; }
 
-        hr { border: none; border-top: 2px solid #DE5D83; margin: 0; }
+        /* ── Upload section ── */
+        #uploadSection {
+            display: flex;
+            min-height: 100vh;
+            padding-top: var(--hh);
+        }
 
-        main {
-            flex: 1;
-            padding: 40px 20px 60px;
-            max-width: 860px;
-            margin: 0 auto;
+        .upload-left {
+            flex: 0 0 55%;
+            background: var(--cream);
+            padding: 72px 64px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .upload-right {
+            flex: 0 0 45%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 3px;
+            background: #ddd;
+            min-height: calc(100vh - var(--hh));
+        }
+
+        .photo-wrap {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .photo-wrap img {
             width: 100%;
-        }
-
-        .hero {
-            text-align: center;
-            margin-bottom: 36px;
-        }
-
-        .hero h2 {
-            font-family: 'Courier New', monospace;
-            font-size: 1.55rem;
-            margin-bottom: 14px;
-            color: #222;
-        }
-
-        .hero p {
-            font-size: 1rem;
-            color: #555;
-            max-width: 620px;
-            margin: 0 auto;
-            line-height: 1.6;
-        }
-
-        /* ── Upload card ── */
-        .upload-card {
-            background: #DE5D83;
-            border-radius: 12px;
-            padding: 32px 28px;
-            max-width: 420px;
-            margin: 0 auto 48px;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.12);
-        }
-
-        .upload-card h2 {
-            font-family: 'Courier New', monospace;
-            text-align: center;
-            color: #fff;
-            margin-bottom: 22px;
-            font-size: 1.3rem;
-        }
-
-        .file-label {
+            height: 100%;
+            object-fit: cover;
             display: block;
-            border: 2px dashed rgba(255,255,255,0.7);
-            border-radius: 8px;
-            padding: 28px 16px;
-            text-align: center;
-            cursor: pointer;
+        }
+
+        .photo-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: var(--red);
             color: #fff;
-            font-size: 0.95rem;
-            transition: background 0.2s;
+            font-family: 'Roboto', sans-serif;
+            font-weight: 900;
+            font-size: 1rem;
+            width: 34px;
+            height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Headline */
+        .headline {
+            font-size: 3.4rem;
+            font-weight: 900;
+            line-height: 1.03;
+            color: var(--dark);
+            letter-spacing: -0.03em;
             margin-bottom: 20px;
         }
 
-        .file-label:hover { background: rgba(255,255,255,0.1); }
+        .subhead {
+            font-size: 1rem;
+            color: #666;
+            line-height: 1.65;
+            max-width: 360px;
+            margin-bottom: 52px;
+        }
 
-        .file-label span { display: block; font-size: 2rem; margin-bottom: 6px; }
+        /* Upload form */
+        #errorMsg {
+            display: none;
+            border-left: 3px solid var(--red);
+            background: #fde8e8;
+            color: #7a1a1a;
+            padding: 10px 14px;
+            margin-bottom: 20px;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.82rem;
+        }
+
+        .drop-zone {
+            border: 2px dashed #bbb;
+            padding: 44px 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.2s, background 0.2s;
+            margin-bottom: 12px;
+            background: rgba(255,255,255,0.45);
+        }
+
+        .drop-zone:hover { border-color: var(--red); background: rgba(255,255,255,0.7); }
+
+        .drop-zone-icon { font-size: 2rem; margin-bottom: 10px; }
+
+        .drop-zone-text {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.78rem;
+            color: #666;
+            letter-spacing: 0.02em;
+        }
 
         #fileInput { display: none; }
 
         #fileName {
-            display: block;
-            text-align: center;
-            color: rgba(255,255,255,0.85);
-            font-size: 0.82rem;
-            margin-top: -12px;
-            margin-bottom: 16px;
-            min-height: 18px;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.78rem;
+            color: var(--red);
+            min-height: 20px;
+            margin-bottom: 20px;
         }
 
         .btn-grade {
             display: block;
             width: 100%;
-            padding: 12px;
-            background: #f8b9c7;
-            color: #222;
-            font-size: 1rem;
+            padding: 16px;
+            background: var(--dark);
+            color: #fff;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.82rem;
             font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
             border: none;
-            border-radius: 6px;
             cursor: pointer;
-            transition: background 0.25s, color 0.25s;
+            transition: background 0.2s;
         }
 
-        .btn-grade:hover:not(:disabled) { background: #fff; color: #DE5D83; }
-        .btn-grade:disabled { opacity: 0.55; cursor: not-allowed; }
+        .btn-grade:hover:not(:disabled) { background: var(--red); }
+        .btn-grade:disabled { opacity: 0.38; cursor: not-allowed; }
 
         /* ── Loading ── */
         #loading {
             display: none;
-            text-align: center;
-            padding: 40px 0;
+            min-height: calc(100vh - var(--hh));
+            padding-top: var(--hh);
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            background: var(--cream);
         }
 
         .spinner {
-            width: 52px;
-            height: 52px;
-            border: 5px solid #f8b9c7;
-            border-top-color: #DE5D83;
+            width: 44px;
+            height: 44px;
+            border: 3px solid rgba(201,75,45,0.18);
+            border-top-color: var(--red);
             border-radius: 50%;
-            animation: spin 0.9s linear infinite;
-            margin: 0 auto 18px;
+            animation: spin 0.8s linear infinite;
+            margin-bottom: 20px;
         }
 
         @keyframes spin { to { transform: rotate(360deg); } }
 
         #loading p {
-            font-family: 'Courier New', monospace;
+            font-family: 'Roboto Mono', monospace;
             color: #555;
-            font-size: 1rem;
+            font-size: 0.85rem;
+            letter-spacing: 0.05em;
         }
 
         /* ── Results ── */
-        #results { display: none; }
+        #results { display: none; padding-top: var(--hh); }
 
-        .results-header {
-            text-align: center;
-            margin-bottom: 32px;
-        }
-
-        .results-header h2 {
-            font-family: 'Courier New', monospace;
-            font-size: 1.4rem;
-            margin-bottom: 16px;
-            color: #222;
-        }
-
-        #previewImg {
-            max-width: 260px;
-            max-height: 260px;
-            border-radius: 10px;
-            border: 4px solid #DE5D83;
-            object-fit: cover;
-        }
-
-        /* Overall grade badge */
-        .overall-badge {
-            display: inline-flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background: #DE5D83;
-            color: #fff;
-            border-radius: 16px;
-            padding: 20px 40px;
-            margin: 24px auto 8px;
-        }
-
-        .overall-badge .grade-letter {
-            font-size: 4rem;
-            font-weight: 700;
-            line-height: 1;
-        }
-
-        .overall-badge .grade-label {
-            font-family: 'Courier New', monospace;
-            font-size: 0.8rem;
-            letter-spacing: 0.08em;
-            margin-top: 4px;
-            opacity: 0.9;
-        }
-
-        #summaryText {
-            text-align: center;
-            color: #444;
-            font-size: 0.97rem;
-            line-height: 1.6;
-            max-width: 640px;
-            margin: 12px auto 32px;
-        }
-
-        /* Metric grid */
-        .metrics-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 16px;
-            margin-bottom: 36px;
-        }
-
-        .metric-card {
-            background: #fff;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        .results-hero {
+            background: var(--cream);
+            padding: 72px 64px;
             display: flex;
-            gap: 16px;
+            gap: 60px;
             align-items: flex-start;
         }
 
-        .metric-grade {
+        .results-photo { flex-shrink: 0; }
+
+        #previewImg {
+            width: 220px;
+            height: 280px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .results-copy { flex: 1; padding-top: 4px; }
+
+        .results-eyebrow {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.68rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--red);
+            margin-bottom: 8px;
+        }
+
+        .overall-grade {
+            font-size: 9rem;
+            font-weight: 900;
+            line-height: 1;
+            color: var(--dark);
+            letter-spacing: -0.06em;
+            margin-bottom: 24px;
+        }
+
+        #summaryText {
+            font-size: 1rem;
+            color: #444;
+            line-height: 1.72;
+            max-width: 460px;
+        }
+
+        /* Metrics */
+        .metrics-section {
+            padding: 60px 64px;
+            background: var(--white);
+        }
+
+        .metrics-eyebrow {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.68rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--mid);
+            padding-bottom: 14px;
+            border-bottom: 1px solid #e0e0e0;
+            margin-bottom: 32px;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            border: 1px solid #e4e4e4;
+        }
+
+        .metric-card {
+            padding: 28px 24px;
+            border-right: 1px solid #e4e4e4;
+            border-bottom: 1px solid #e4e4e4;
+            display: flex;
+            gap: 18px;
+            align-items: flex-start;
+        }
+
+        .metric-letter {
             flex-shrink: 0;
-            width: 52px;
-            height: 52px;
-            border-radius: 10px;
-            background: #DE5D83;
-            color: #fff;
-            font-size: 1.6rem;
-            font-weight: 700;
+            font-size: 2.4rem;
+            font-weight: 900;
+            line-height: 1;
+            width: 40px;
+            color: var(--dark);
+        }
+
+        .metric-letter.grade-A { color: #2E7D32; }
+        .metric-letter.grade-B { color: #558B2F; }
+        .metric-letter.grade-C { color: #E65100; }
+        .metric-letter.grade-D { color: #BF360C; }
+        .metric-letter.grade-F { color: #B71C1C; }
+
+        .metric-label {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.72rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--dark);
+            margin-bottom: 6px;
+        }
+
+        .metric-feedback { font-size: 0.87rem; color: #555; line-height: 1.58; }
+
+        /* Results footer */
+        .results-footer {
+            background: var(--dark);
+            padding: 36px 64px;
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: space-between;
         }
 
-        .metric-grade.grade-A { background: #4caf7d; }
-        .metric-grade.grade-B { background: #7db84c; }
-        .metric-grade.grade-C { background: #e6a817; }
-        .metric-grade.grade-D { background: #e07050; }
-        .metric-grade.grade-F { background: #b03030; }
-
-        .metric-info h3 {
-            font-size: 0.95rem;
-            font-weight: 700;
-            margin-bottom: 5px;
-            color: #222;
-            font-family: 'Courier New', monospace;
+        .results-footer-note {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.35);
         }
 
-        .metric-info p {
-            font-size: 0.85rem;
-            color: #555;
-            line-height: 1.5;
-        }
-
-        /* Try again button */
         .btn-reset {
-            display: block;
-            margin: 0 auto;
-            padding: 12px 36px;
-            background: #DE5D83;
+            padding: 13px 32px;
+            background: var(--red);
             color: #fff;
-            font-size: 1rem;
-            font-weight: 500;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.78rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
             border: none;
-            border-radius: 6px;
             cursor: pointer;
-            transition: background 0.25s;
+            transition: opacity 0.2s;
         }
 
-        .btn-reset:hover { background: #c44a70; }
+        .btn-reset:hover { opacity: 0.82; }
 
-        /* Error */
-        #errorMsg {
-            display: none;
-            background: #fde8e8;
-            border: 1px solid #e07070;
-            color: #b03030;
-            border-radius: 8px;
-            padding: 14px 18px;
-            margin-bottom: 20px;
-            text-align: center;
-            font-size: 0.92rem;
-        }
-
+        /* ── Footer ── */
         footer {
-            background-color: #ffd1dc;
-            text-align: center;
-            padding: 16px;
-            border-top: 2px solid #DE5D83;
+            background: var(--dark);
+            padding: 18px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-top: 3px solid var(--red);
+        }
+
+        footer span {
+            font-family: 'Roboto Mono', monospace;
+            color: rgba(255,255,255,0.3);
+            font-size: 0.72rem;
         }
 
         footer a {
-            font-family: 'Courier New', monospace;
-            color: #555;
+            font-family: 'Roboto Mono', monospace;
+            color: rgba(255,255,255,0.55);
             text-decoration: none;
-            font-size: 0.85rem;
+            font-size: 0.72rem;
+            letter-spacing: 0.06em;
         }
 
-        footer a:hover { color: #DE5D83; }
+        footer a:hover { color: #fff; }
+
+        /* ── Mobile ── */
+        @media (max-width: 800px) {
+            #uploadSection { flex-direction: column; }
+            .upload-left { padding: 48px 28px; flex: none; }
+            .upload-right { flex: none; min-height: 280px; grid-template-rows: 140px 140px; }
+            .headline { font-size: 2.4rem; }
+            .results-hero { flex-direction: column; padding: 48px 28px; gap: 32px; }
+            #previewImg { width: 100%; height: 240px; }
+            .metrics-section { padding: 40px 28px; }
+            .results-footer { flex-direction: column; gap: 16px; padding: 32px 28px; }
+            footer { padding: 18px 28px; }
+        }
     </style>
 </head>
 <body>
 
 <header>
-    <img src="pg_logo_main.png" alt="PicGradr logo">
+    <a class="logo" href="/">PICGRADR _</a>
     <nav>
-        <a href="article.html">Articles about dating</a>
-        <a href="information.html">More information</a>
+        <a href="article.html">Articles</a>
+        <a href="information.html">Info</a>
     </nav>
-    <hr>
 </header>
 
-<main>
+<!-- Upload section -->
+<div id="uploadSection">
+    <div class="upload-left">
+        <div id="errorMsg"></div>
+        <h1 class="headline">Make your first impression count.</h1>
+        <p class="subhead">Upload your dating profile photo and get honest, AI-powered feedback on what's working — and what to improve.</p>
 
-    <!-- Hero text -->
-    <div class="hero">
-        <h2>Welcome to Pic Gradr — make your first impression count</h2>
-        <p>In the world of online dating, your profile picture is your gateway to matches. Upload your photo and our AI will give you honest, actionable feedback on what's working and what to improve.</p>
-    </div>
-
-    <!-- Error banner -->
-    <div id="errorMsg"></div>
-
-    <!-- Upload form -->
-    <div class="upload-card" id="uploadSection">
-        <h2>Upload Your Photo</h2>
-
-        <label class="file-label" for="fileInput">
-            <span>📷</span>
-            Click to choose an image
+        <label class="drop-zone" for="fileInput">
+            <div class="drop-zone-icon">📷</div>
+            <div class="drop-zone-text">Click to select a photo &mdash; JPG, PNG, WEBP</div>
         </label>
-        <input type="file" id="fileInput" name="image" accept="image/jpeg,image/png,image/gif,image/webp">
-        <span id="fileName">No file selected</span>
-        <button class="btn-grade" id="gradeBtn" disabled>Grade My Photo</button>
+        <input type="file" id="fileInput" accept="image/jpeg,image/png,image/gif,image/webp">
+        <div id="fileName"></div>
+        <button class="btn-grade" id="gradeBtn" disabled>Analyze Photo &rarr;</button>
     </div>
 
-    <!-- Loading state -->
-    <div id="loading">
-        <div class="spinner"></div>
-        <p>Analyzing your photo with AI…</p>
-    </div>
-
-    <!-- Results -->
-    <div id="results">
-        <div class="results-header">
-            <h2>Your Results</h2>
-            <img id="previewImg" src="" alt="Your uploaded photo">
-            <br>
-            <div class="overall-badge">
-                <div class="grade-letter" id="overallGrade">—</div>
-                <div class="grade-label">OVERALL GRADE</div>
-            </div>
+    <div class="upload-right">
+        <div class="photo-wrap">
+            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&q=80" alt="Example profile — grade A">
+            <div class="photo-badge">A</div>
         </div>
+        <div class="photo-wrap">
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80" alt="Example profile — grade B">
+            <div class="photo-badge">B</div>
+        </div>
+        <div class="photo-wrap">
+            <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=600&q=80" alt="Example profile — grade A">
+            <div class="photo-badge">A</div>
+        </div>
+        <div class="photo-wrap">
+            <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=600&q=80" alt="Example profile — grade C">
+            <div class="photo-badge">C</div>
+        </div>
+    </div>
+</div>
 
-        <p id="summaryText"></p>
+<!-- Loading -->
+<div id="loading">
+    <div class="spinner"></div>
+    <p>Analyzing your photo&hellip;</p>
+</div>
 
-        <div class="metrics-grid" id="metricsGrid"></div>
-
-        <button class="btn-reset" id="resetBtn">Grade Another Photo</button>
+<!-- Results -->
+<div id="results">
+    <div class="results-hero">
+        <div class="results-photo">
+            <img id="previewImg" src="" alt="Your uploaded photo">
+        </div>
+        <div class="results-copy">
+            <div class="results-eyebrow">Overall Grade</div>
+            <div class="overall-grade" id="overallGrade">—</div>
+            <p id="summaryText"></p>
+        </div>
     </div>
 
-</main>
+    <div class="metrics-section">
+        <div class="metrics-eyebrow">Breakdown</div>
+        <div class="metrics-grid" id="metricsGrid"></div>
+    </div>
+
+    <div class="results-footer">
+        <span class="results-footer-note">PicGradr &mdash; AI photo analysis</span>
+        <button class="btn-reset" id="resetBtn">Grade Another &rarr;</button>
+    </div>
+</div>
 
 <footer>
+    <span>&copy; 2025 PicGradr</span>
     <a href="information.html">More Information</a>
 </footer>
 
@@ -393,10 +486,10 @@
     const fileName      = document.getElementById('fileName');
     const gradeBtn      = document.getElementById('gradeBtn');
     const uploadSection = document.getElementById('uploadSection');
-    const loading    = document.getElementById('loading');
-    const results    = document.getElementById('results');
-    const errorMsg   = document.getElementById('errorMsg');
-    const resetBtn   = document.getElementById('resetBtn');
+    const loading       = document.getElementById('loading');
+    const results       = document.getElementById('results');
+    const errorMsg      = document.getElementById('errorMsg');
+    const resetBtn      = document.getElementById('resetBtn');
 
     const METRIC_LABELS = {
         lighting:    'Lighting',
@@ -447,7 +540,7 @@ For "overall", consider the photo holistically as a dating profile image.
 For "summary", write 2–3 sentences with the top takeaway and one key improvement tip.`;
 
     fileInput.addEventListener('change', () => {
-        fileName.textContent = fileInput.files.length > 0 ? fileInput.files[0].name : 'No file selected';
+        fileName.textContent = fileInput.files.length > 0 ? fileInput.files[0].name : '';
         gradeBtn.disabled = fileInput.files.length === 0;
     });
 
@@ -457,10 +550,9 @@ For "summary", write 2–3 sentences with the top takeaway and one key improveme
 
         hideError();
         uploadSection.style.display = 'none';
-        loading.style.display = 'block';
+        loading.style.display = 'flex';
         results.style.display = 'none';
 
-        // Show image preview immediately
         const reader = new FileReader();
         reader.onload = e => { document.getElementById('previewImg').src = e.target.result; };
         reader.readAsDataURL(file);
@@ -471,16 +563,16 @@ For "summary", write 2–3 sentences with the top takeaway and one key improveme
             displayResults(data);
         } catch (err) {
             loading.style.display = 'none';
-            uploadSection.style.display = 'block';
+            uploadSection.style.display = 'flex';
             showError(err.message || 'Something went wrong. Please try again.');
         }
     });
 
     resetBtn.addEventListener('click', () => {
         results.style.display = 'none';
-        uploadSection.style.display = 'block';
+        uploadSection.style.display = 'flex';
         fileInput.value = '';
-        fileName.textContent = 'No file selected';
+        fileName.textContent = '';
         gradeBtn.disabled = true;
         hideError();
     });
@@ -506,10 +598,7 @@ For "summary", write 2–3 sentences with the top takeaway and one key improveme
                 messages: [{
                     role: 'user',
                     content: [
-                        {
-                            type: 'image_url',
-                            image_url: { url: `data:${mimeType};base64,${base64Data}` },
-                        },
+                        { type: 'image_url', image_url: { url: `data:${mimeType};base64,${base64Data}` } },
                         { type: 'text', text: PROMPT },
                     ],
                 }],
@@ -522,8 +611,7 @@ For "summary", write 2–3 sentences with the top takeaway and one key improveme
 
         if (!resp.ok) {
             const err = await resp.json().catch(() => ({}));
-            const msg = err?.error?.message || `OpenAI error ${resp.status}`;
-            throw new Error(msg);
+            throw new Error(err?.error?.message || `OpenAI error ${resp.status}`);
         }
 
         const json = await resp.json();
@@ -533,26 +621,20 @@ For "summary", write 2–3 sentences with the top takeaway and one key improveme
     function displayResults(data) {
         loading.style.display = 'none';
 
-        // Overall grade
-        const overallEl = document.getElementById('overallGrade');
-        overallEl.textContent = data.overall;
-
-        // Summary
+        document.getElementById('overallGrade').textContent = data.overall;
         document.getElementById('summaryText').textContent = data.summary;
 
-        // Metric cards
         const grid = document.getElementById('metricsGrid');
         grid.innerHTML = '';
         for (const [key, label] of Object.entries(METRIC_LABELS)) {
             const grade = data[key];
-            const feedback = data[`${key}_feedback`];
             const card = document.createElement('div');
             card.className = 'metric-card';
             card.innerHTML = `
-                <div class="metric-grade grade-${grade}">${grade}</div>
-                <div class="metric-info">
-                    <h3>${label}</h3>
-                    <p>${feedback}</p>
+                <div class="metric-letter grade-${grade}">${grade}</div>
+                <div>
+                    <div class="metric-label">${label}</div>
+                    <div class="metric-feedback">${data[key + '_feedback']}</div>
                 </div>
             `;
             grid.appendChild(card);
@@ -561,14 +643,8 @@ For "summary", write 2–3 sentences with the top takeaway and one key improveme
         results.style.display = 'block';
     }
 
-    function showError(msg) {
-        errorMsg.textContent = msg;
-        errorMsg.style.display = 'block';
-    }
-
-    function hideError() {
-        errorMsg.style.display = 'none';
-    }
+    function showError(msg) { errorMsg.textContent = msg; errorMsg.style.display = 'block'; }
+    function hideError() { errorMsg.style.display = 'none'; }
 </script>
 
 </body>
